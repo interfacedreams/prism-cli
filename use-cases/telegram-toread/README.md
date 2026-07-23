@@ -68,6 +68,12 @@ On macOS, the first run prompts "would like to access data from other apps"
 (the CLI reads the Prism app's store) — click **Allow** once for whatever is
 running the script (e.g. your terminal, or the `claude` helper).
 
+> **Note:** If using Claude Code routines, you may have to grant `claude` Full
+> Disk Access in System Settings → Privacy & Security so that you don't have
+> to manually approve each time (watch out: the desktop app and the `claude`
+> helper are separate entries in that list). Try running the routine once
+> manually in Claude desktop to see if you get the permission prompt.
+
 ## Reset
 
 To re-send everything (e.g. after testing): `prism cursor reset telegram-sweep`.
