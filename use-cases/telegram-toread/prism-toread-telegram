@@ -1,0 +1,43 @@
+#!/bin/zsh
+# Daily sweep: send every "to read" note the cursor hasn't seen yet to
+# Telegram, one message per note. Notes with replies are formatted as a
+# bullet list (note first, then each reply).
+# Acks each note only after Telegram confirms the send, so failures retry
+# on the next run instead of being lost.
+#
+# Expects ~/.config/prism-telegram/env with:
+#   TELEGRAM_BOT_TOKEN=...
+#   TELEGRAM_CHAT_ID=...
+#
+# Override via env: PRISM_TAG, PRISM_SINCE, PRISM_CURSOR
+set -euo pipefail
+
+source "$HOME/.config/prism-telegram/env"
+
+TAG="${PRISM_TAG:-to read}"
+SINCE="${PRISM_SINCE:-2026-07-21}"
+CURSOR="${PRISM_CURSOR:-telegram-sweep}"
+PRISM=$(command -v prism)
+
+notes=$($PRISM list --tag "$TAG" --since "$SINCE" --new-for "$CURSOR" --by created --format jsonl --fields uuid,content)
+
+if [[ -z "$notes" ]]; then
+  echo "No new to-read notes; nothing sent."
+  exit 0
+fi
+
+echo "$notes" | jq -r '.uuid' | while IFS= read -r uuid; do
+  # Fetch the full thread: first element is the note, the rest are replies.
+  # With replies, format as bullets (note first); without, send content as-is.
+  note=$($PRISM get "$uuid" | jq -r 'if length == 1 then .[0].content else [.[] | "• " + .content] | join("\n") end')
+  ok=$(curl -sS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+    --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+    --data-urlencode "text=${note}" \
+    | jq -r '.ok')
+  if [[ "$ok" == "true" ]]; then
+    $PRISM ack "$CURSOR" --notes "$uuid"
+    echo "Sent + acked ${uuid}"
+  else
+    echo "Telegram send failed for ${uuid}; leaving unacked for next run." >&2
+  fi
+done
