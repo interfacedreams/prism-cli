@@ -5,6 +5,7 @@ The CLI for the [Prism](https://prism.you) notes app. A Swift CLI to create, rea
 ## Install
 
 ```sh
+brew tap interfacedreams/tap https://github.com/interfacedreams/prism-cli
 brew install interfacedreams/tap/prism
 ```
 

@@ -1,6 +1,6 @@
 # `prism` agent usage guide
 
-`prism` reads and writes the local, on-device note store used by the Prism app. Writes are local; the running app picks them up and syncs them via your iCloud. Install with `brew install interfacedreams/tap/prism`, then use this guide as the complete reference.
+`prism` reads and writes the local, on-device note store used by the Prism app. Writes are local; the running app picks them up and syncs them via your iCloud. Install it with Homebrew (see the [README](README.md)), then use this guide as the complete reference.
 
 ## Command reference
 
