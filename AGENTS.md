@@ -35,6 +35,7 @@ Run `prism <command> --help` for built-in usage. Filters on `list` combine with 
 - `get <uuid>` — emit one JSON array containing the resolved note followed by its replies; accept an unambiguous UUID prefix.
 - `create --content <text> [--tag <name>]... [--dedupe-url]` — create a note, creating missing tags; `--tag` is repeatable. With `--dedupe-url`, use the first URL in the new content and return `duplicate <uuid>` without writing when an existing note has that exact URL and every requested tag. With no requested tags, dedupe across the store.
 - `reply <uuid> --content <text> [--bot]` — append a reply to the resolved thread; accept an unambiguous UUID prefix. `--bot` prepends `🤖 ` exactly.
+- `images <uuid> --out <dir>` — write each of the note's images to `<dir>/<image-uuid>.jpg`, creating the directory, and emit a JSON summary; accept an unambiguous UUID prefix. There is no equivalent export for a memo's audio; read its transcript from the note object instead.
 - `ack <name> --notes <id1,id2> [--notes <id3>]` — add exact identifiers to the cursor's seen set; `--notes` is repeatable and accepts comma-separated values.
 - `ack <name> --all-shown` — acknowledge the UUIDs from that cursor's most recent poll. Supply exactly one of `--notes` or `--all-shown`.
 - `cursor list` — emit cursor entries with `name`, `seenCount`, `lastShownCount`, and `updatedAt`.
@@ -48,9 +49,21 @@ All commands also accept `--help` in the command position. Top-level help is `pr
 
 The complete note object contains these fields:
 
-`uuid`, `content`, `createdAt`, `contentUpdatedAt`, `tags`, `starred`, `done`, `reminderDate`, `reviewCount`, `reviewedAt`, `parentThreadId`, `threadId`.
+`uuid`, `content`, `createdAt`, `contentUpdatedAt`, `tags`, `starred`, `done`, `reminderDate`, `reviewCount`, `reviewedAt`, `parentThreadId`, `threadId`, `images`, `recording`.
 
-Dates are ISO8601 strings with fractional seconds. `reminderDate`, `reviewedAt`, `parentThreadId`, and `threadId` may be `null`. `done: true` means the note is in the Library.
+Dates are ISO8601 strings with fractional seconds. `reminderDate`, `reviewedAt`, `parentThreadId`, `threadId`, and `recording` may be `null`. `done: true` means the note is in the Library.
+
+`images` is an array — possibly empty — of `{uuid, width, height}`; export the pixels with the `images` command.
+
+`recording` is a voice memo, or `null` on a note that has none. A note carries at most one. It contains `uuid`, `createdAt` (when it was spoken, which for a memo relayed from the Watch precedes the note's own timestamps), `duration` in seconds, `transcript`, `transcriptState`, and `transcribedAt`.
+
+Read `transcriptState` before `transcript`. Transcription runs on-device and asynchronously, possibly on another device, so a memo arrives before its text does:
+
+- `pending` — `transcript` and `transcribedAt` are `null` and text may appear on a later poll. Do not treat this note as empty.
+- `done` — `transcript` holds the text.
+- `failed` — `transcript` is `null` and no device is expected to fill it in.
+
+A memo is standalone and has no text of its own, so its `content` is `""` and the transcript is the whole body. `--format text` prints the transcript in place of empty content and appends `voice <m:ss>` metadata; JSON always reports `content` verbatim, so read `recording.transcript` yourself. `--search`, `--mentions`, `--matches`, and `--has-url` match `content` and link enrichment only — they never match a transcript.
 
 | Format or command | Shape |
 |---|---|
