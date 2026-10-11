@@ -22,3 +22,10 @@ prism --help
 Notes live in the same on-device store as the app and sync via your iCloud like everything else in Prism.
 
 Building automations or agent workflows? The **[agent usage guide](AGENTS.md)** is the full reference — every command, the output contract, and the poll/ack cursor pattern for "do X whenever a new note appears" jobs (pipe to `curl` for Telegram/Signal, or hand each note to `claude -p`).
+
+## AI rule metadata
+
+CLI 1.0.5 matches the app's updated shared-store schema. Notes expose
+`aiRuleStatus`; `prism collections` exposes `aiRuleInstruction` and `aiRuleAction`.
+For example, `prism list --fields uuid,content,aiRuleStatus` reports saved rule
+outcomes. Rule execution remains in the app.

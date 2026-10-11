@@ -49,7 +49,15 @@ All commands also accept `--help` in the command position. Top-level help is `pr
 
 The complete note object contains these fields:
 
-`uuid`, `content`, `createdAt`, `contentUpdatedAt`, `tags`, `starred`, `done`, `reminderDate`, `reviewCount`, `reviewedAt`, `parentThreadId`, `threadId`, `images`, `recording`.
+`uuid`, `content`, `createdAt`, `contentUpdatedAt`, `tags`, `starred`, `done`, `reminderDate`, `reviewCount`, `reviewedAt`, `parentThreadId`, `threadId`, `images`, `recording`, `aiRuleStatus`.
+
+`aiRuleStatus` is `waiting`, `completed`, `failed`, or `null` when no collection
+rule was queued. It is also selectable with `--fields aiRuleStatus`. The CLI
+reports this state; it does not execute collection rules.
+
+`collections` (alias: `tags`) also reports `aiRuleInstruction` and `aiRuleAction`,
+each nullable. `aiRuleAction` is `transform` or `reply` when configured. Collection
+rules have no separate webpage-fetch flag.
 
 Dates are ISO8601 strings with fractional seconds. `reminderDate`, `reviewedAt`, `parentThreadId`, `threadId`, and `recording` may be `null`. `done: true` means the note is in the Library.
 

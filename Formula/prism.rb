@@ -9,9 +9,9 @@
 class Prism < Formula
   desc "Command-line access to your Prism notes — create, read, and automate from the terminal"
   homepage "https://github.com/interfacedreams/prism-cli"
-  version "1.0.4"
+  version "1.0.5"
   url "https://github.com/interfacedreams/prism-cli/releases/download/v#{version}/prism-cli-#{version}-macos-universal.tar.gz"
-  sha256 "ea6c9782faa7d2019c88be6edefc7e0f7cb5ba22ffe551ddb88bcfd971da2cc3"
+  sha256 "e3b781ce288a186d1f4a4fc671253ea267c44e51e70ce0dd1ba88cf221eb3dd3"
 
   depends_on :macos
 
