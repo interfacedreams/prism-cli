@@ -1,5 +1,10 @@
 # Prism CLI
 
+> [!WARNING]
+> **Deprecated:** The standalone Prism CLI is being replaced by CLI and AI integrations built into [Prism for Mac](https://prism.you).
+>
+> In Prism for Mac, open **Settings → AI → Setup instructions…** to connect your AI assistant and access the bundled CLI. If you don't see this yet, it will be available in an app update in the next few days.
+
 The CLI for the [Prism](https://prism.you) notes app. A Swift CLI to create, read, tag, and reply to your notes from the terminal — and wire Prism into scripts, scheduled jobs, and Claude Code.
 
 ## Install
